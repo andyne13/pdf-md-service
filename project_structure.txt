@@ -1,0 +1,39 @@
+pdf-md-service/
+│
+├── core/
+│   ├── converters/
+│   │   └── marker_converter.py
+│   ├── captioning/
+│   │   └── vlm_captioner.py
+│   ├── retry/
+│   │   └── exponential_backoff.py
+│   ├── markdown_injector.py
+│   ├── interfaces.py
+│   └── __init__.py
+│
+├── infrastructure/
+│   ├── webhook_sender.py
+│   ├── config.py
+│   └── __init__.py
+│
+├── services/
+│   ├── serve_app.py
+│   ├── main.py
+│   └── __init__.py
+│
+├── api/
+│   ├── api.py
+│   ├── requirements.txt
+│   └── Dockerfile
+│
+├── deployment/
+│   ├── docker-compose.yml
+│   ├── ray_serve/
+│   │   ├── Dockerfile
+│   │   ├── start.sh
+│   │   └── requirements.txt
+│   └── README.md
+│
+├── batch_convert.py
+├── pyproject.toml
+└── README.md

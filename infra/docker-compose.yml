@@ -1,0 +1,49 @@
+services:
+  ray-serve:
+    build:
+      context: ..
+      dockerfile: infra/ray_serve/Dockerfile
+    container_name: ray-serve
+    runtime: nvidia
+    shm_size: 10gb
+    ipc: host
+    pid: host
+    cap_add:
+      - SYS_PTRACE
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - TORCH_DEVICE=cuda
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+      - VLM_BASE_URL=${VLM_BASE_URL}
+      - VLM_API_KEY=${VLM_API_KEY}
+      - VLM_MODEL=${VLM_MODEL}
+      - CAPTION_PROMPT=${CAPTION_PROMPT}
+      - POOL_WORKERS=${POOL_WORKERS:-4}
+      - CHUNK_SIZE=${CHUNK_SIZE:-10}
+    ports:
+      - "8000:8000"
+      - "8265:8265"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/-/healthz')"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  api:
+    build:
+      context: ..
+      dockerfile: api/Dockerfile
+    container_name: api
+    environment:
+      - RAY_SERVE_URL=http://ray-serve:8000/
+    ports:
+      - "8080:8080"
+    depends_on:
+      ray-serve:
+        condition: service_healthy

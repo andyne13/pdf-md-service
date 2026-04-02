@@ -1,0 +1,6 @@
+marker-pdf==1.8.2
+torch==2.7.1
+ray[serve]>=2.40
+openai>=1.50
+httpx>=0.28
+python-multipart>=0.0.9
